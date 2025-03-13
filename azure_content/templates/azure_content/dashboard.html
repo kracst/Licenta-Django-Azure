@@ -1,0 +1,304 @@
+{% extends "azure_content/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Sensor Cards Row -->
+    <div class="row">
+        <!-- Humidity Card -->
+        <div class="col-12 col-md-3 mb-3">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-tint fa-2x"></i>
+                    <h5 class="mt-2">Humidity</h5>
+                    <h3 id="humidity-value">{{ sensor_data.0.humidity }}%</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Temperature Card -->
+        <div class="col-12 col-md-3 mb-3">
+            <div class="card bg-danger text-white shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-thermometer-half fa-2x"></i>
+                    <h5 class="mt-2">Temperature</h5>
+                    <h3 id="temperature-value">{{ sensor_data.0.temperature }}°C</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Luminosity Card -->
+        <div class="col-12 col-md-3 mb-3">
+            <div class="card bg-warning text-white shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-lightbulb fa-2x"></i>
+                    <h5 class="mt-2">Luminosity</h5>
+                    <h3>-- lx</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- pH Level Card -->
+        <div class="col-12 col-md-3 mb-3">
+            <div class="card bg-success text-white shadow">
+                <div class="card-body text-center">
+                    <i class="fas fa-flask fa-2x"></i>
+                    <h5 class="mt-2">pH Level</h5>
+                    <h3>--</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Temperature Chart -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-thermometer-half"></i> Temperature Over Time
+                    </div>
+                    <div class="card-body">
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Humidity Chart -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-tint"></i> Humidity Over Time
+                    </div>
+                    <div class="card-body">
+                        <canvas id="humidityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Sensor Data Table -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-database"></i> Sensor Data Log
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Temperature (°C)</th>
+                                    <th>Humidity (%)</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sensor-data-body">
+                                {% for data in sensor_data %}
+                                <tr>
+                                    <td>{{ data.temperature }}</td>
+                                    <td>{{ data.humidity }}</td>
+                                    <td>{{ data.timestamp }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="3">No data available</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+
+<script>
+    function fetchSensorData() {
+        fetch('/api/get_sensor_data/')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('sensor-data-body');
+                tableBody.innerHTML = '';  // Clear the current table content
+
+                if (data.length === 0) return; // No data available
+
+                // Update the latest values for display
+                const latestData = data[0];
+                document.getElementById('humidity-value').textContent = `${latestData.humidity} %`;
+                document.getElementById('temperature-value').textContent = `${latestData.temperature} °C`;
+
+                // Prepare data for charts
+                const temperatureData = [];
+                const humidityData = [];
+                const timestamps = [];
+
+                // Add new rows to the table and prepare chart data
+                data.forEach(item => {
+                    const formattedDate = new Date(item.timestamp).toLocaleString('en-GB', { 
+                        day: '2-digit', month: '2-digit', year: 'numeric', 
+                        hour: '2-digit', minute: '2-digit' 
+                    });
+
+                    // Populate table
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${item.temperature}</td>
+                        <td>${item.humidity}</td>
+                        <td>${formattedDate}</td>
+                    `;
+                    tableBody.appendChild(row);
+
+                    // Prepare data for charts
+                    timestamps.push(formattedDate);
+                    temperatureData.push(item.temperature);
+                    humidityData.push(item.humidity);
+                });
+                // Get timestamp of latest data
+                const formattedTimestamp = new Date(latestData.timestamp).toLocaleTimeString();
+                
+                // Update charts
+                updateTemperatureChart(latestData.temperature, formattedTimestamp);
+                updateHumidityChart(latestData.humidity, formattedTimestamp);
+            })
+            .catch(error => console.error('Error fetching sensor data:', error));
+    }
+
+    function updateTemperatureChart(newTemperature, timestamp) {
+    const maxDataPoints = 50; // Adjust this value to show more data points
+
+    temperatureChart.data.labels.push(timestamp);
+    temperatureChart.data.datasets[0].data.push(newTemperature);
+
+    // Keep only the last `maxDataPoints` values
+    if (temperatureChart.data.labels.length > maxDataPoints) {
+        temperatureChart.data.labels.shift(); // Remove the oldest label
+        temperatureChart.data.datasets[0].data.shift(); // Remove the oldest data point
+    }
+
+    temperatureChart.update();
+    }
+    function updateHumidityChart(newHumidity, timestamp) {
+    const maxDataPoints = 50; // Adjust as needed
+
+    humidityChart.data.labels.push(timestamp);
+    humidityChart.data.datasets[0].data.push(newHumidity);
+
+    if (humidityChart.data.labels.length > maxDataPoints) {
+        humidityChart.data.labels.shift();
+        humidityChart.data.datasets[0].data.shift();
+    }
+
+    humidityChart.update();
+    }
+    // Initialize Temperature Chart
+    const temperatureChart = new Chart(document.getElementById('temperatureChart'), {
+    type: 'line',
+    data: {
+        labels: [],  // X-axis labels
+        datasets: [{
+            label: 'Temperature (°C)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            data: [],
+            fill: true,
+            tension: 0.4,
+            borderWidth: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            tooltip: {  // Enable tooltips for better interactivity
+                enabled: true,
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(0,0,0,0.7)',
+                titleFont: { size: 14 },
+                bodyFont: { size: 12 },
+                padding: 10
+            },
+            zoom: {  // Add zooming functionality
+                pan: {
+                    enabled: true,
+                    mode: 'x' // Allow panning along X-axis
+                },
+                zoom: {
+                    wheel: { enabled: true },  // Enable zooming with mouse scroll
+                    pinch: { enabled: true },  // Enable pinch zoom on touch devices
+                    mode: 'x'  // Zoom in on X-axis only
+                }
+            }
+        },
+        scales: {
+            x: { display: false },
+            y: { display: true }
+        }
+    }
+});
+
+
+    // Initialize Humidity Chart
+    const humidityChart = new Chart(document.getElementById('humidityChart'), {
+    type: 'line',
+    data: {
+        labels: [],  // X-axis labels
+        datasets: [{
+            label: 'Humidity (%)',
+            borderColor: 'rgba(54, 162, 235, 1)',  // Blue color for humidity
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            data: [],
+            fill: true,
+            tension: 0.4,
+            borderWidth: 3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            tooltip: {  // Enable tooltips for better interactivity
+                enabled: true,
+                mode: 'index',
+                intersect: false,
+                backgroundColor: 'rgba(0,0,0,0.7)',
+                titleFont: { size: 14 },
+                bodyFont: { size: 12 },
+                padding: 10
+            },
+            zoom: {  // Add zooming functionality
+                pan: {
+                    enabled: true,
+                    mode: 'x' // Allow panning along X-axis
+                },
+                zoom: {
+                    wheel: { enabled: true },  // Enable zooming with mouse scroll
+                    pinch: { enabled: true },  // Enable pinch zoom on touch devices
+                    mode: 'x'  // Zoom in on X-axis only
+                }
+            }
+        },
+        scales: {
+            x: { display: false },
+            y: { display: true }
+        }
+    }
+});
+
+
+    // Fetch new data every 5 seconds
+    setInterval(fetchSensorData, 5000);
+
+    // Fetch initial data immediately
+    fetchSensorData();
+</script>
+
+
+
+{% endblock content %}

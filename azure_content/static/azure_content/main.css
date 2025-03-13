@@ -6,6 +6,33 @@
     justify-content: center;
     font-family: Arial, Helvetica, sans-serif ;
   }
+/* Ensure the menu button is visible on mobile */
+@media (max-width: 768px) {
+  #openlogo {
+      width: 30px; /* Ensure the button is visible */
+      color: #fff; /* Ensure the icon color is visible */
+      transition: width 0.3s;
+  }
+
+  /* Make the side-menu closed by default on mobile */
+  #side-menu {
+      width: 0;
+      transition: 0.3s;
+  }
+
+  /* Make sure the menu will slide in properly */
+  #moduleblok {
+      width: 0;
+      transition: 0.3s;
+  }
+
+  /* Adjust the main content when the side menu is open */
+  #main {
+      margin-left: 0;
+      transition: margin-left 0.3s;
+  }
+}
+
   
 .Logo{
   color: white;

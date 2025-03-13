@@ -83,62 +83,6 @@
                 </div>
         </div>
     </div>
-
-    <div class="shadowholder">
-        <div class="subtitel2"> 
-            <div> <i class="fas fa-thermometer-half mr-2"></i> Sensor Data </div>
-        </div>
-        <div class="content mb-3"> 
-            <table class="beheertable" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Temperature (°C)</th>
-                        <th>Humidity (%)</th>
-                        <th>Timestamp</th>
-                    </tr>
-                </thead>
-                <tbody id="sensor-data-body">
-                    {% for data in sensor_data %}
-                        <tr>
-                            <td>{{ data.temperature }}</td>
-                            <td>{{ data.humidity }}</td>
-                            <td>{{ data.timestamp|date:'d-m-Y H:i' }}</td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="3">No sensor data available</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+   
     
-    <script>
-        function fetchSensorData() {
-            fetch('/api/get_sensor_data/')
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById('sensor-data-body');
-                    tableBody.innerHTML = '';  // Clear the current table content
-    
-                    // Add new rows
-                    data.forEach(item => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${item.temperature}</td>
-                            <td>${item.humidity}</td>
-                            <td>${new Date(item.timestamp).toLocaleString()}</td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error('Error fetching sensor data:', error));
-        }
-    
-        // Fetch new data every 5 seconds
-        setInterval(fetchSensorData, 5000);
-    </script>
-    
-
 {% endblock content%}

@@ -40,6 +40,12 @@ class ProjectDeleteView(DeleteView):
     fields = ['name']
     success_url ="/"
 
+def dashboard(request):
+    # Get the latest sensor data
+    sensor_data = SensorData.objects.order_by('-timestamp')[:10]  # Fetch the last 10 readings
+
+    return render(request, 'azure_content/dashboard.html', {'sensor_data': sensor_data})
+
 @csrf_exempt  # Disable CSRF for simplicity (only for testing!)
 def receive_data(request):
     if request.method == 'POST':

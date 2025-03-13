@@ -1,6 +1,5 @@
 {% load static %}
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +13,7 @@
     <script src="https://kit.fontawesome.com/f44bd2967c.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-    <title> AZURE DEPLOY APP</title>
+    <title> Monitorizare Sera</title>
 
 </head>
 
@@ -23,20 +22,18 @@
   <nav class="navbar sticky-top"> 
      <span class="open-slide">
          <a class = "Logo" href="#"> 
-            <div class = "Logo"> Our application! </div>
+            <div class = "Logo"> Braescu Stefan </div>
         </a>
 
         <a id="openlogo" href="#" onclick="openSlideMenu()"> 
           <i id="logozoom" class="fas fa-bars"></i>
         </a>
-
-        
      </span>
 
       <ul class="navbar-nav">
         <li>
            <a href="#"> 
-              <button  class="dropbtn"> <i class="fas fa-user-circle mr-1"></i> USER </button>
+              <button class="dropbtn"> <i class="fas fa-user-circle mr-1"></i> USER </button>
            </a>
         </li>
       </ul>
@@ -44,7 +41,8 @@
 
    {% url 'home' as home_url %}
    {% url 'about' as about_url %}
-   
+   {% url 'dashboard' as dashboard_url %}
+
   <div id="side-menu" class="side-nav"> 
 
       <a class="menuitem {% if request.path == home_url %} active {%endif%}" href="{{home_url}}">
@@ -56,64 +54,55 @@
         <div class="navicon"><i class="fas fa-user mr-2"></i> </div>
         <div> About </div>
       </a>
+      <a class="menuitem {% if request.path == dashboard_url %} active {%endif%}" href="{{dashboard_url}}"> 
+        <div class="navicon"><i class="fas fa-tachometer-alt mr-2"></i> </div>
+        <div> Monitorizare </div>
+      </a>
 
-     
+    <div id="moduleblok" class="moduleblok"> 
       
-
-    
-    <div id="moduleblok"class="moduleblok"> 
-     
-      <div class="module"> 
-        
-         <i class="fas fa-cog mr-2"></i> My app
-      
-       
-     </div>
-        <a class="sluiten"href="#" class="btn-close" onclick="closeSlideMenu()"> 
-           X
-        </a>
-      </div>
-     
     </div>
   
   </div>
 
-
-  
   <div id="main">
   {% block content%}
-
   {% endblock content%}
   </div>  
 
   <script> 
-    function openSlideMenu(){
-      document.getElementById('side-menu').style.width
-       = '200px';
-      document.getElementById('openlogo').style.width
-       = '0';
-      document.getElementById('openlogo').style.color
-       = '#3b5998';
-      document.getElementById('moduleblok').style.width
-       = '200px';
-      document.getElementById('main').style.marginLeft
-       = '200px';
+    function toggleSlideMenu() {
+    const sideMenu = document.getElementById('side-menu');
+    const openLogo = document.getElementById('openlogo');
+    const moduleBlok = document.getElementById('moduleblok');
+    const mainContent = document.getElementById('main');
+    
+    const isMenuOpen = sideMenu.style.width === '200px';  // Check if the menu is open
+    
+    if (isMenuOpen) {
+        // If menu is open, close it
+        sideMenu.style.width = '0';
+        openLogo.style.width = '30px';  // Show the hamburger icon
+        moduleBlok.style.width = '0';
+        mainContent.style.marginLeft = '0';
+    } else {
+        // If menu is closed, open it
+        sideMenu.style.width = '200px';
+        openLogo.style.width = '0';  // Hide the hamburger icon
+        moduleBlok.style.width = '200px';
+        mainContent.style.marginLeft = '200px';
     }
+}
 
-    function closeSlideMenu(){
-      document.getElementById('side-menu').style.width
-       = '0';
-      document.getElementById('moduleblok').style.width
-       = '0';
-      document.getElementById('main').style.marginLeft
-       = '0';
-      document.getElementById('openlogo').style.width
-       = '30px';
-      document.getElementById('openlogo').style.color
-       = '#f2f2f2';
+// Attach the toggle function to the openlogo button
+document.getElementById('openlogo').addEventListener('click', toggleSlideMenu);
+
+// Auto-close the menu on mobile devices when the page loads
+window.addEventListener('load', function() {
+    if (window.innerWidth <= 768) {
+        closeSlideMenu();  // Close the menu on load for mobile
     }
-
-
+});
   </script>
 </body>
 </html>
