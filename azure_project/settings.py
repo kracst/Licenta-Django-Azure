@@ -112,7 +112,6 @@ STATICFILES_DIRS = (str(BASE_DIR.joinpath('azure_content/static')),)
 STATIC_URL = '/azure_content/static/'
 
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 

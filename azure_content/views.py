@@ -1,12 +1,50 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic.list import ListView
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate, login, logout
 from django.utils.timezone import now
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 from .models import *
+from .forms import CreateUserForm
+
+
+def registerPage(request):
+    form = CreateUserForm()
+
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user = form.cleaned_data.get('username')
+            messages.success(request, 'Account was created for ' + user)
+            return redirect('login')
+        
+    return render(request, 'azure_content/register.html',{'form':form})
+
+def loginPage(request):
+    form = AuthenticationForm(request, data=request.POST or None)  # Use built-in form
+
+    if request.method == 'POST':
+        if form.is_valid():
+            user = form.get_user()  # Get authenticated user
+            login(request, user)  # Log the user in
+            return redirect('dashboard')  # Redirect to dashboard
+        else:
+            messages.info(request, "Username OR Password is incorect")
+
+    return render(request, 'azure_content/login.html', {'form': form})
+
+def logoutUser(request):
+    logout(request)
+    return redirect('home')
 
 class HomeView(ListView):
     context_object_name = 'project_list'
@@ -18,8 +56,8 @@ class HomeView(ListView):
         # Fetch the latest 10 sensor data
         context['sensor_data'] = SensorData.objects.all().order_by('-timestamp')[:10]
         return context
-
-class AboutView(TemplateView):
+    
+class AboutView(LoginRequiredMixin,TemplateView):
     template_name = "azure_content/about.html"
 
 class ProjectCreateView(CreateView):
@@ -40,6 +78,7 @@ class ProjectDeleteView(DeleteView):
     fields = ['name']
     success_url ="/"
 
+@login_required(login_url='login')
 def dashboard(request):
     # Get the latest sensor data
     sensor_data = SensorData.objects.order_by('-timestamp')[:10]  # Fetch the last 10 readings

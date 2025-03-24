@@ -16,26 +16,32 @@
     <title> Monitorizare Sera</title>
 
 </head>
-
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 <body>
 
   <nav class="navbar sticky-top"> 
      <span class="open-slide">
-         <a class = "Logo" href="#"> 
-            <div class = "Logo"> Braescu Stefan </div>
-        </a>
-
         <a id="openlogo" href="#" onclick="openSlideMenu()"> 
           <i id="logozoom" class="fas fa-bars"></i>
         </a>
      </span>
 
-      <ul class="navbar-nav">
-        <li>
-           <a href="#"> 
-              <button class="dropbtn"> <i class="fas fa-user-circle mr-1"></i> USER </button>
-           </a>
-        </li>
+     <ul class="navbar-nav ml-auto"> <!-- Ensure it stays on the right -->
+      {% if user.is_authenticated %}
+          <li class="nav-item d-flex align-items-center">
+              <i class="fas fa-user-circle mr-2"></i> 
+              <span class="mr-3">{{ user.username }}</span> 
+              <a class="btn btn-outline-danger btn-sm" href="{% url 'logout' %}">Logout</a>
+          </li>
+      {% else %}
+          <li class="nav-item">
+              <a class="btn btn-outline-primary btn-sm" href="{% url 'login' %}">Login</a>
+          </li>
+      {% endif %}
       </ul>
   </nav>
 
@@ -47,7 +53,7 @@
 
       <a class="menuitem {% if request.path == home_url %} active {%endif%}" href="{{home_url}}">
         <div class="navicon"><i class="fas fa-home mr-2"></i> </div> 
-        <div> Home </div>
+        <div> Acasa </div>
       </a>
 
       <a class="menuitem {% if request.path == about_url %} active {%endif%}" href="{{about_url}}"> 
@@ -80,19 +86,18 @@
     const isMenuOpen = sideMenu.style.width === '200px';  // Check if the menu is open
     
     if (isMenuOpen) {
-        // If menu is open, close it
-        sideMenu.style.width = '0';
-        openLogo.style.width = '30px';  // Show the hamburger icon
-        moduleBlok.style.width = '0';
-        mainContent.style.marginLeft = '0';
+    // If menu is open, close it
+    sideMenu.style.width = '0';
+    moduleBlok.style.width = '0';
+    mainContent.style.marginLeft = '0';
     } else {
-        // If menu is closed, open it
-        sideMenu.style.width = '200px';
-        openLogo.style.width = '0';  // Hide the hamburger icon
-        moduleBlok.style.width = '200px';
-        mainContent.style.marginLeft = '200px';
-    }
+    // If menu is closed, open it
+    sideMenu.style.width = '200px';
+    moduleBlok.style.width = '200px';
+    mainContent.style.marginLeft = '200px';
 }
+}
+
 
 // Attach the toggle function to the openlogo button
 document.getElementById('openlogo').addEventListener('click', toggleSlideMenu);

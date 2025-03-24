@@ -6,6 +6,312 @@
     justify-content: center;
     font-family: Arial, Helvetica, sans-serif ;
   }
+.navbar, #main {
+    overflow: visible !important;
+}
+/* Hero Section */
+.hero-section {
+  background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+              url('../images/greenhouse-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  padding: 5rem 0;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero-section h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero-section .lead {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+/* Carousel */
+.custom-carousel {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  margin-bottom: 3rem;
+  height: 500px;
+}
+
+.carousel-inner {
+  height: 100%;
+}
+
+.carousel-item img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-caption {
+  background: rgba(0, 100, 0, 0.7);
+  padding: 1.5rem;
+  border-radius: 8px;
+  bottom: 20%;
+  left: 10%;
+  right: 10%;
+}
+
+/* Features Section */
+.features-section {
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* CTA Section */
+.cta-section {
+  background-color: #f8f9fa;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-section {
+      padding: 3rem 0;
+  }
+  
+  .custom-carousel {
+      height: 350px;
+  }
+  
+  .carousel-caption {
+      padding: 1rem;
+      bottom: 10%;
+  }
+  
+  .features-grid {
+      grid-template-columns: 1fr;
+  }
+  
+  .cta-buttons {
+      flex-direction: column;
+  }
+}
+
+/* Custom Carousel Container */
+.custom-carousel-container {
+  width: 60%; /* Adjust this value to control width */
+  max-width: 1000px; /* Maximum width */
+  height: 600px; /* Fixed height */
+  margin: 0 auto;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Carousel Base Styling */
+#customCarousel {
+  height: 100%;
+}
+
+#customCarousel .carousel-inner {
+  height: 100%;
+  border-radius: 8px;
+}
+
+#customCarousel .carousel-item {
+  height: 100%;
+}
+
+#customCarousel .carousel-item img {
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Caption Styling */
+#customCarousel .carousel-caption {
+  bottom: 20px;
+  left: 20px;
+  right: auto;
+  text-align: left;
+  padding: 0;
+  max-width: 60%;
+}
+
+#customCarousel .caption-content {
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 5px;
+}
+
+#customCarousel .carousel-caption h5 {
+  color: white;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+#customCarousel .carousel-caption p {
+  color: white;
+  font-size: 0.9rem;
+  margin-bottom: 0;
+}
+
+/* Navigation Buttons */
+#customCarousel .carousel-control-prev,
+#customCarousel .carousel-control-next {
+  width: 40px;
+  height: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0,0,0,0.3);
+  border-radius: 50%;
+  opacity: 0.8;
+}
+
+#customCarousel .carousel-control-prev {
+  left: 15px;
+}
+
+#customCarousel .carousel-control-next {
+  right: 15px;
+}
+
+#customCarousel .carousel-control-prev-icon,
+#customCarousel .carousel-control-next-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Hover Effects */
+#customCarousel .carousel-control-prev:hover,
+#customCarousel .carousel-control-next:hover {
+  background-color: rgba(0,0,0,0.5);
+  opacity: 1;
+}
+
+#customCarousel .caption-content {
+  transition: all 0.3s ease;
+}
+
+#customCarousel .caption-content:hover {
+  background-color: rgba(0,0,0,0.8);
+  transform: translateY(-2px);
+}
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  /* Make captions visible and properly sized */
+  #customCarousel .carousel-caption {
+      display: block !important; /* Force show on mobile */
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      max-width: 100%;
+  }
+  
+  #customCarousel .caption-content {
+      background-color: rgba(0, 0, 0, 0.7);
+      padding: 10px;
+      border-radius: 5px;
+  }
+  
+  /* Adjust text sizes for mobile */
+  #customCarousel .carousel-caption h5 {
+      font-size: 1rem;
+      margin-bottom: 5px;
+  }
+  
+  #customCarousel .carousel-caption p {
+      font-size: 0.8rem;
+      margin-bottom: 0;
+  }
+  .custom-carousel-container {
+    height: 60vh; /* Uses 60% of screen height */
+    width: 95%;
+    min-height: 350px; /* Minimum height */
+}
+
+/* Ensure images fill the space */
+#customCarousel .carousel-item img {
+    height: 100%;
+    object-fit: cover;
+    object-position: center center; /* Focus on center of image */
+}
+
+/* Adjust caption position for larger images */
+#customCarousel .carousel-caption {
+    bottom: 20px;
+}
+  
+  /* For very small devices */
+  @media (max-width: 480px) {
+      #customCarousel .carousel-caption h5 {
+          font-size: 0.9rem;
+      }
+      
+      #customCarousel .carousel-caption p {
+          font-size: 0.7rem;
+      }
+      
+      .custom-carousel-container {
+        height: 55vh; /* Slightly smaller on tiny screens */
+        min-height: 300px;
+      }
+  }
+}
+
+#openlogo {
+  color: #ffffff; 
+  width: 30px; 
+  height: 30px; 
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 50%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 15px; /* Adjust for horizontal position */
+  top: -25px;  /* Adjust to move it inside the green navbar */
+  z-index: 9999; /* Ensure visibility above other elements */
+  transition: transform 0.3s; /* Smooth animation */
+}
+
+/* Ensure the icon is white and centered within the button */
+#openlogo i {
+  color: white; /* Ensure the icon color is white */
+  font-size: 20px; /* Adjust the size of the icon */
+}
+
+/* Make sure the button stays visible when not hovered */
+#openlogo {
+  visibility: visible; /* Ensure the button is always visible */
+  opacity: 1; /* Make the button fully opaque */
+}
+
+/* Ensure the button looks good on hover */
+#openlogo:hover {
+  background-color: #102044; /* Darker background on hover */
+  cursor: pointer; /* Change cursor to pointer */
+}
+
+#side-menu {
+  width: 0;
+  transition: 0.3s;
+}
 /* Ensure the menu button is visible on mobile */
 @media (max-width: 768px) {
   #openlogo {
@@ -32,6 +338,53 @@
       transition: margin-left 0.3s;
   }
 }
+.dropdown {
+  position: relative;
+  display: inline-block;
+  z-index: 1050; /* Ensures it's above other elements */
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 5px;
+  background-color: white;
+  min-width: 150px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1100 !important; /* High z-index to make sure it's visible */
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0; /* Align to the right */
+  top: 40px; /* Adjust below the button */
+  background-color: white;
+  min-width: 150px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  border-radius: 5px;
+  text-align: left;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 10px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #f1f1f1;
+}
+
+/* Show dropdown on click */
+.dropdown:focus-within .dropdown-content, 
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
 
   
 .Logo{
@@ -110,8 +463,8 @@
     top: 0;
     left: 0;
     height: 63px;
-    background-color: #3b5998 ;
-    overflow: hidden;
+    background-color: #28a745 !important;
+    overflow: visible;
     z-index: 999999;
     box-shadow: -4px 5px 13px -1px rgba(0,0,0,0.32);
   }
@@ -132,7 +485,7 @@
   
   }
   #openlogo{
-    color: #3b5998 ;
+    color: #000000 ;
     margin-top: 12px;
     margin-left: 7px;
     width: 0px;
@@ -240,7 +593,7 @@
   
   
 .dropbtn{
-    position: fixed;
+    position: absolute;
     right: 20px;
     top: 15px;
     z-index: 999999;
