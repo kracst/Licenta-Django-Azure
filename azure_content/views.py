@@ -57,8 +57,12 @@ class HomeView(ListView):
         context['sensor_data'] = SensorData.objects.all().order_by('-timestamp')[:10]
         return context
     
-class AboutView(LoginRequiredMixin,TemplateView):
-    template_name = "azure_content/about.html"
+@login_required(login_url='login')
+def about(request):
+    # Get the latest sensor data
+    sensor_data = SensorData.objects.order_by('-timestamp')[:10]  # Fetch the last 10 readings
+
+    return render(request, 'azure_content/about.html', {'sensor_data': sensor_data})
 
 class ProjectCreateView(CreateView):
     model = Project
@@ -122,3 +126,4 @@ def get_sensor_data(request):
     
     # Return as JSON
     return JsonResponse(data_list, safe=False)
+
