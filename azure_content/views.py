@@ -15,7 +15,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import *
 from .forms import CreateUserForm
 
-
 def registerPage(request):
     form = CreateUserForm()
 
@@ -114,8 +113,8 @@ def receive_data(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 def get_sensor_data(request):
-    # Get the latest 10 sensor data entries (you can adjust the number if needed)
-    sensor_data = SensorData.objects.all().order_by('-timestamp')[:10]
+    # Get the latest 50 sensor data entries (you can adjust the number if needed)
+    sensor_data = SensorData.objects.all().order_by('-timestamp')[:50]
     
     # Convert sensor data to a list of dictionaries
     data_list = [{

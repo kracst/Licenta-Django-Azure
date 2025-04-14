@@ -28,20 +28,19 @@
 <body>
 
   <nav class="navbar sticky-top">
-    <div class="container-fluid">
+    <div class="container-fluid d-flex align-items-center">
         <!-- Left side - menu button -->
-        <span class="open-slide">
-            <a id="openlogo" href="#" onclick="openSlideMenu()"> 
+        <span class="open-slide me-3">
+            <a id="openlogo" href="#"> 
                 <i id="logozoom" class="fas fa-bars"></i>
             </a>
         </span>
 
-        <!-- Centered title -->
-        <div class="d-flex justify-content-center flex-grow-1">
-          <div class="navbar-brand text-center mx-auto d-none d-sm-block">
-              <h2 class="mb-0"><i class="fas fa-leaf mr-2"></i>Monitorizare Sera</h2>
-          </div>
-      </div>
+        <!-- Centered title      
+          <div class="navbar-brand ms-5 d-flex align-items-center">
+              <h2 class="mb-0">Monitorizare Sera</h2>
+          </div>--> 
+      
 
 
         <!-- Right side - login/logout -->
@@ -66,21 +65,37 @@
    {% url 'about' as about_url %}
    {% url 'dashboard' as dashboard_url %}
 
-  <div id="side-menu" class="side-nav"> 
-
-      <a class="menuitem {% if request.path == home_url %} active {%endif%}" href="{{home_url}}">
-        <div class="navicon"><i class="fas fa-home mr-2"></i> </div> 
-        <div> Acasa </div>
-      </a>
-
-      <a class="menuitem {% if request.path == about_url %} active {%endif%}" href="{{about_url}}"> 
-        <div class="navicon"><i class="fas fa-user mr-2"></i> </div>
-        <div> Comparare </div>
-      </a>
-      <a class="menuitem {% if request.path == dashboard_url %} active {%endif%}" href="{{dashboard_url}}"> 
-        <div class="navicon"><i class="fas fa-tachometer-alt mr-2"></i> </div>
-        <div> Monitorizare </div>
-      </a>
+   <div id="side-menu" class="side-nav"> 
+    <a class="menuitem {% if request.path == home_url %} active {% endif %}" href="{{ home_url }}">
+        <div class="navicon"><i class="fas fa-home mr-2"></i></div> 
+        <div>Acasa</div>
+    </a>
+  
+    <a class="menuitem {% if request.path == about_url %} active {% endif %}" href="{{ about_url }}"> 
+        <div class="navicon"><i class="fas fa-code-compare mr-2"></i></div>
+        <div>Comparare</div>
+    </a>
+  
+    <a class="menuitem {% if request.path == dashboard_url %} active {% endif %}" href="{{ dashboard_url }}"> 
+        <div class="navicon"><i class="fas fa-tachometer-alt mr-2"></i></div>
+        <div>Monitorizare</div>
+    </a>
+  
+    <!-- Weather Info Box -->
+    <div class="sidebar-weather">
+        <div class="weather-header">
+            <h3>Vremea</h3>
+            <i id="weather-icon"></i>
+        </div>
+        <div class="weather-details">
+            <p><strong>Oraș:  </strong> <span id="weather-city"></span></p>
+            <p><strong>Temp:  </strong> <span id="weather-temp"></span></p>
+            <p><strong>Condiție:  </strong> <span id="weather-condition"></span></p>
+            <p><strong>Umiditate:  </strong> <span id="weather-humidity"></span></p>
+        </div>
+    </div>
+</div>
+  
 
     <div id="moduleblok" class="moduleblok"> 
       
@@ -91,8 +106,9 @@
   <div id="main">
   {% block content%}
   {% endblock content%}
-  </div>  
-  <footer class="bg-dark text-white py-4">
+  </div> 
+  </div>
+  <footer class="site-footer bg-dark text-white py-4">
     <div class="container">
         <div class="row">
             <div class="col-md-4 mb-4 mb-md-0">
@@ -116,37 +132,76 @@
         </div>
     </div>
 </footer>
+<script>
+  const apiKey = "aebdc38f00f7d7b81eae61fe4cb5d0fc"; // Replace with your key
+  const city = "Suceava"; // Your greenhouse location
+  
+  function fetchWeatherData() {
+        fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=ro`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('weather-city').textContent = data.name;
+                document.getElementById('weather-temp').textContent = `${data.main.temp} °C`;
+                document.getElementById('weather-condition').textContent = data.weather[0].description;
+                document.getElementById('weather-humidity').textContent = `${data.main.humidity}%`;
+                updateWeatherUI(data);
+            })
+            .catch(error => console.error('Error fetching weather data:', error));
+    }
+
+    // Call on page load
+    fetchWeatherData();
+
+    // Optionally refresh every 10 minutes
+    setInterval(fetchWeatherData, 600000);
+    function updateWeatherUI(data) {
+    const condition = data.weather[0].main.toLowerCase();  // e.g., "clear", "clouds", "rain"
+    const iconElement = document.getElementById('weather-icon');
+
+    // Set the icon class based on condition
+    let iconClass = 'fas fa-cloud'; // default
+
+    if (condition.includes("clear")) {
+      iconClass = 'fas fa-sun';
+    } else if (condition.includes("cloud")) {
+      iconClass = 'fas fa-cloud';
+    } else if (condition.includes("rain")) {
+      iconClass = 'fas fa-cloud-showers-heavy';
+    } else if (condition.includes("thunderstorm")) {
+      iconClass = 'fas fa-bolt';
+    } else if (condition.includes("snow")) {
+      iconClass = 'fas fa-snowflake';
+    } else if (condition.includes("mist") || condition.includes("fog")) {
+      iconClass = 'fas fa-smog';
+    }
+
+    iconElement.className = iconClass;
+
+    // Update other weather info
+    document.getElementById('weather-city').textContent = data.name;
+    document.getElementById('weather-temp').textContent = `${Math.round(data.main.temp)} °C`;
+    document.getElementById('weather-condition').textContent = data.weather[0].description;
+    document.getElementById('weather-humidity').textContent = `${data.main.humidity} %`;
+  }
+
+  </script>
   <script> 
-    function toggleSlideMenu() {
+   function toggleSlideMenu() {
     const sideMenu = document.getElementById('side-menu');
-    const openLogo = document.getElementById('openlogo');
     const moduleBlok = document.getElementById('moduleblok');
     const mainContent = document.getElementById('main');
-    
-    const isMenuOpen = sideMenu.style.width === '200px';  // Check if the menu is open
-    
-    if (isMenuOpen) {
-    // If menu is open, close it
-    sideMenu.style.width = '0';
-    moduleBlok.style.width = '0';
-    mainContent.style.marginLeft = '0';
-    } else {
-    // If menu is closed, open it
-    sideMenu.style.width = '200px';
-    moduleBlok.style.width = '200px';
-    mainContent.style.marginLeft = '200px';
+
+    // Toggle the "open" class
+    sideMenu.classList.toggle('open');
+    moduleBlok.classList.toggle('open');
+    mainContent.classList.toggle('shifted');
+
+     
 }
-}
-
-
-// Attach the toggle function to the openlogo button
-document.getElementById('openlogo').addEventListener('click', toggleSlideMenu);
-
-// Auto-close the menu on mobile devices when the page loads
-window.addEventListener('load', function() {
-    if (window.innerWidth <= 768) {
-        closeSlideMenu();  // Close the menu on load for mobile
-    }
+  // Attach the toggle function to the openlogo button
+  document.getElementById('openlogo').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent default link behavior
+    toggleSlideMenu();
 });
   </script>
 </body>

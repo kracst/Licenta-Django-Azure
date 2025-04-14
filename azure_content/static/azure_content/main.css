@@ -1,47 +1,25 @@
 #main{
-    margin-left: 200px;
+    margin-left: 0px;
     transition: margin-left 0.5s;
     z-index: 999988;
     display: flex;
     justify-content: center;
     font-family: Arial, Helvetica, sans-serif ;
+    transition: margin-left 0.3s ease;
   }
 .navbar, #main {
     overflow: visible !important;
+}
+
+#main.shifted {
+  margin-left: 250px; /* Match the width of the side menu */
 }
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   line-height: 1.6;
   /*background-color: #28a745 !important;*/
   color: #333;
-}
 
-/* Hero section styling */
-.hero-section {
-  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('hero-image.jpg');
-  background-size: cover;
-  background-position: center;
-  color: white;
-  padding: 5rem 0;
-  margin-bottom: 3rem;
-  border-radius: 0.3rem;
-}
-
-/* Feature boxes */
-.feature-box {
-  padding: 2rem;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .hero-section {
-      padding: 3rem 0;
-  }
-  .hero-section h1 {
-      font-size: 2rem;
-  }
 }
 
 /* Custom Carousel Container */
@@ -244,8 +222,7 @@ body {
 }
 
 #side-menu {
-  width: 0;
-  transition: 0.3s;
+  
 }
 /* Ensure the menu button is visible on mobile */
 @media (max-width: 768px) {
@@ -259,12 +236,14 @@ body {
   #side-menu {
       width: 0;
       transition: 0.3s;
+     
   }
 
   /* Make sure the menu will slide in properly */
   #moduleblok {
       width: 0;
       transition: 0.3s;
+      
   }
 
   /* Adjust the main content when the side menu is open */
@@ -346,53 +325,16 @@ body {
 .icon{
   margin-right: 5px;
 }
-
-.titel{
-  width: 62%;
-  margin-left: 2%;
-  margin-top: 8px;
-  height: 100%;
-  align-items: center;
-}
- 
-.extra{
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-right: 10px;
-  width: 35%;
-  height: 100%;
-}
-
-.bevestigenknop2{
-  background-color: #3B5998 !important;
-  border-radius: 5px;
-  margin-bottom:1px;
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
-  height: 22px;
-}
-
-.bevestigenknop2:hover{
-  background-color: grey !important;
-}
-
-
-.iconcolor{
-  color: #3B5998;
-}
-
 .iconcolor:hover{
   color: #01143d;
 }
 
-.open-slide{
+  .open-slide{
     position: fixed;
     display: flex;
     flex-direction: row;
   }
-.navbar{
+  .navbar{
     position: fixed;
     width: 100%;
     top: 0;
@@ -445,50 +387,169 @@ body {
     color: rgb(32, 0, 83);
   }
   
-  .side-nav{
-    height: 100%;
-    width: 200px;
+  /* Sidebar Container */
+.side-nav {
+  height: 83%;
+  width: 0; /* Start closed */
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  background-color: #ffffff;
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
+  overflow-x: hidden; /* Hide horizontal overflow */
+  /* Enable vertical scrolling */
+  overflow-y: auto;
+  padding-top: 60px;
+  transition: width 0.3s ease;
+  border-right: green !important;
+}
+
+.side-nav.open {
+  width: 250px; /* Open state width */
+  padding: 60px 15px 20px 15px; /* Add side padding when open */
+  border-right: red !important;
+
+}
+
+/* Module block styling */
+.moduleblok {
+  width: 0;
+  transition: width 0.3s;
+}
+
+.moduleblok.open {
+  width: 200px;
+}
+
+
+
+
+/* Menu items */
+.side-nav .menuitem {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 15px; /* Adjusted padding */
+  margin: 5px 0; /* Added margin between items */
+  text-decoration: none;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+  font-weight: 500;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.3s;
+  border-radius: 5px;
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow-x: hidden; /* Hide overflow text */
+  overflow-y: auto;
+}
+
+/* Menu item hover states */
+.side-nav .menuitem:hover {
+  background-color: #e5e7e7;
+  color: #28a745;
+}
+
+.side-nav .menuitem.active {
+  background-color: #e5e7e7;
+  color: #28a745 !important;
+}
+
+/* Icon styling */
+.side-nav .menuitem .navicon {
+  width: 30px;
+  min-width: 30px; /* Ensure fixed width */
+  margin-right: 10px;
+  text-align: center;
+}
+
+/* Weather Info Box */
+.sidebar-weather {
+  margin: 30px 0;
+  padding: 15px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0; /* Lighter border */
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.sidebar-weather .weather-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.sidebar-weather .weather-header i {
+  color: #fcbf49 !important;
+  font-size: 1.2rem;
+}
+
+.sidebar-weather .weather-details p {
+  margin: 12px 0; /* Increased spacing */
+  padding: 3px 3px;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 10px
+}
+
+.sidebar-weather .weather-details i {
+  width: 20px;
+  margin-right: 8px;
+  color: #6c757d;
+}
+/* Mobile-specific fixes */
+@media (max-width: 768px) {
+  /* Fix stacking context */
+  body {
+    z-index: 0 !important; /* Remove negative z-index */
+    position: relative;
+  }
+  
+  .navbar {
+    z-index: 1000; /* Reduced from 999999 */
+  }
+  
+  .side-nav {
+    z-index: 999; /* Just below navbar */
+    height: calc(100vh - 63px) !important; /* Full viewport minus navbar */
+    width: 0;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    background: #d4edda !important;
+    padding-top: 20px;
+  }
+  
+  .side-nav.open {
+    width: 57vw !important;
+    transform: translateX(0);
+  }
+  
+  /* Ensure content is visible */
+  .side-nav .menuitem,
+  .side-nav .sidebar-weather {
+    min-width: 50vw !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Prevent body scroll when menu is open */
+  body.menu-open {
+    overflow: hidden;
     position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1) ;
-    overflow-x:hidden;
-    padding-top: 60px;
-    transition: 0.5s;
+    width: 100%;
   }
-  
-  .active{
-    color: #3b5998 !important;
-    background-color: rgb(229, 231, 231);
-  }
-  
-  .side-nav .menuitem{
-    padding: 10px 10px 10px 30px ;
-    text-decoration: none;
-    font-size: 16px;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #333;
-    font-weight: 500 ;
-    display: flex;
-    flex-direction: row;
-    transition: 0.3s;
-  }
-  
-  .navicon{
-    width: 30px;
-  }
-  
-  .side-nav .menuitem:hover{
-    text-decoration: none;
-    color: #3b5998;
-    background-color: rgb(229, 231, 231);
-  }
-  
-  .secondheader{
-    background-color: grey !important;
-  }
-  
+}
+
   .moduleblok {
     display: flex;
     flex-direction: row;
@@ -557,119 +618,15 @@ body {
   margin-left: 1%;
   margin-left: 1%;
 } 
-
-.beheertable th,
-.beheertable td {
-  padding: 4px 3px;
-  text-align: left;
-}
-
-.beheertable td {
-  font-size:12px;
-}
-
-.beheertable tbody tr {
-  border-bottom: 1px solid #dddddd;
-}
-
-.beheertable tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
-}
-
-.beheertable tbody tr:last-of-type {
-  border-bottom: 2px solid #3d70b2;
-}
-
-.beheertable th {
-  background-color: #2D323E;
-  color: white;
-  text-align: left;
-  font-size: 12px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
   .holder{
     display: flex;
     flex-direction: column;
     width:98%;
     margin-top: 10px;
   }
-
-
-.subtitel2{
-  display: flex;
-  flex-direction: row;
-  margin-left: 20px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  color: #333;
-  font-weight: bold;
-  font-size: 16px;  
-}
-
-.subtitel2{
-  justify-content: space-between;
-}
-
 .content{
   width: 98%;
   margin-left: 1%;
   margin-top: 1%;
-
-}
-
-.factbox2{
-  display: flex;
-  min-width: 250px;
-  border-radius: 5px;
-  margin-bottom: 5px;
-  margin-top: 10px;
-  flex-direction: column;
-  text-align: center;
-  width: 22%;
-  color: #333;
-  box-shadow: -4px 5px 13px -1px rgba(0,0,0,0.32);
-}
-
-.factbox-title{
-  font-size: 12px;
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-.boxenholder2{
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.factbox-fact{
-  font-size: 22px;
-  font-weight: bold;
-}
-
-
-.shadowholder{
-display: flex;
-margin-top: 10px;
-border-radius: 5px;
-width: 100%;
-flex-direction: column;
-box-shadow: 0 0 20px rgba(0, 0, 0, .15);
-
-
-}
-
-.shadowholder2{
-display: flex;
-margin-top: 10px;
-border-radius: 5px;
-width: 100%;
-flex-direction: column;
-box-shadow: 0 0 20px rgba(0, 0, 0, .15);
-
 
 }
