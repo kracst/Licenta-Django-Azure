@@ -12,7 +12,8 @@ class Project(models.Model):
 class SensorData(models.Model):
     temperature = models.FloatField()
     humidity = models.FloatField()
+    luminosity = models.FloatField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.temperature}°C, {self.humidity}%, {self.timestamp}"
+        return f"{self.temperature}°C, {self.humidity}%, {self.luminosity}%, {self.timestamp}"

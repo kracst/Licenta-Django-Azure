@@ -29,13 +29,13 @@ def registerPage(request):
     return render(request, 'azure_content/register.html',{'form':form})
 
 def loginPage(request):
-    form = AuthenticationForm(request, data=request.POST or None)  # Use built-in form
+    form = AuthenticationForm(request, data=request.POST or None)  
 
     if request.method == 'POST':
         if form.is_valid():
-            user = form.get_user()  # Get authenticated user
-            login(request, user)  # Log the user in
-            return redirect('dashboard')  # Redirect to dashboard
+            user = form.get_user()  
+            login(request, user)  
+            return redirect('dashboard')  
         else:
             messages.info(request, "Username OR Password is incorect")
 
@@ -59,7 +59,7 @@ class HomeView(ListView):
 @login_required(login_url='login')
 def about(request):
     # Get the latest sensor data
-    sensor_data = SensorData.objects.order_by('-timestamp')[:10]  # Fetch the last 10 readings
+    sensor_data = SensorData.objects.all().order_by('-timestamp')[:10]  # Fetch the last 10 readings
 
     return render(request, 'azure_content/about.html', {'sensor_data': sensor_data})
 
@@ -83,8 +83,8 @@ class ProjectDeleteView(DeleteView):
 
 @login_required(login_url='login')
 def dashboard(request):
-    # Get the latest sensor data
-    sensor_data = SensorData.objects.order_by('-timestamp')[:10]  # Fetch the last 10 readings
+    
+    sensor_data = SensorData.objects.order_by('-timestamp')[:10]  
 
     return render(request, 'azure_content/dashboard.html', {'sensor_data': sensor_data})
 
@@ -97,9 +97,10 @@ def receive_data(request):
 
             temperature = data.get('temperature')
             humidity = data.get('humidity')
+            luminosity = data.get('luminosity')  
 
-            if temperature is not None and humidity is not None:
-                SensorData.objects.create(temperature=temperature, humidity=humidity, timestamp=now())
+            if temperature is not None and humidity is not None and luminosity is not None:
+                SensorData.objects.create(temperature=temperature, humidity=humidity, luminosity=luminosity,  timestamp=now())
                 print("Data saved successfully!")  # Debugging line
                 return JsonResponse({"message": "Data received successfully"}, status=201)
             else:
@@ -113,16 +114,17 @@ def receive_data(request):
     return JsonResponse({"error": "Invalid request method"}, status=405)
 
 def get_sensor_data(request):
-    # Get the latest 50 sensor data entries (you can adjust the number if needed)
+   
     sensor_data = SensorData.objects.all().order_by('-timestamp')[:50]
     
-    # Convert sensor data to a list of dictionaries
+  
     data_list = [{
         'temperature': data.temperature,
         'humidity': data.humidity,
+        'luminosity': data.luminosity,
         'timestamp': data.timestamp.isoformat()
     } for data in sensor_data]
     
-    # Return as JSON
+    
     return JsonResponse(data_list, safe=False)
 
