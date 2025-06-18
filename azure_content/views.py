@@ -1,3 +1,4 @@
+import openpyxl
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -14,6 +15,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import *
 from .forms import CreateUserForm
+
+from django.http import HttpResponse
+
 
 def registerPage(request):
     form = CreateUserForm()
@@ -52,7 +56,6 @@ class HomeView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Fetch the latest 10 sensor data
         context['sensor_data'] = SensorData.objects.all().order_by('-timestamp')[:10]
         return context
     
@@ -98,9 +101,10 @@ def receive_data(request):
             temperature = data.get('temperature')
             humidity = data.get('humidity')
             luminosity = data.get('luminosity')  
+            pH = data.get('pH')  
 
             if temperature is not None and humidity is not None and luminosity is not None:
-                SensorData.objects.create(temperature=temperature, humidity=humidity, luminosity=luminosity,  timestamp=now())
+                SensorData.objects.create(temperature=temperature, humidity=humidity, luminosity=luminosity, pH=pH,  timestamp=now())
                 print("Data saved successfully!")  # Debugging line
                 return JsonResponse({"message": "Data received successfully"}, status=201)
             else:
@@ -122,9 +126,34 @@ def get_sensor_data(request):
         'temperature': data.temperature,
         'humidity': data.humidity,
         'luminosity': data.luminosity,
+        'pH': data.pH, 
         'timestamp': data.timestamp.isoformat()
     } for data in sensor_data]
     
     
     return JsonResponse(data_list, safe=False)
 
+def download_excel(request):
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Sensor Data"
+
+    # Header row
+    ws.append(["Data și ora", "Temperatură (°C)", "Umiditate (%)", "Luminozitate (lx)"])  # adjust as needed
+
+    # Query and write your data
+    for entry in SensorData.objects.all():  # Or .order_by('-timestamp')[:100] etc.
+        ws.append([
+            entry.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+            entry.temperature,
+            entry.humidity,
+            entry.luminosity
+        ])
+
+    # Prepare response
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
+    response["Content-Disposition"] = 'attachment; filename="sensor_data.xlsx"'
+    wb.save(response)
+    return response
