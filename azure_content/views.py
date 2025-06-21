@@ -31,8 +31,8 @@ def registerPage(request):
             user = form.save()
             email = form.cleaned_data.get('email')  # Get the email from the form
             send_mail(
-                'Account Created',
-                'Your account has been created successfully!',
+                'Cont creat',
+                'Contul tău a fost creat cu succes!',
                 None,  # Uses DEFAULT_FROM_EMAIL from settings.py
                 [email],
                 fail_silently=False,
@@ -224,11 +224,3 @@ def download_excel(request):
     wb.save(response)
     return response
 
-from django.core.mail import send_mail
-send_mail(
-    'Test Subject',
-    'Test message body',
-    None,  # Uses DEFAULT_FROM_EMAIL
-    ['stefbraescu353@gmail.com'],  # Your actual email
-    fail_silently=False
-)
