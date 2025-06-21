@@ -12,12 +12,15 @@ from django.contrib.auth import authenticate, login, logout
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 from .models import *
 from .forms import CreateUserForm
-
 from django.http import HttpResponse
-
+from django.core.mail import send_mail
 
 def registerPage(request):
     form = CreateUserForm()
@@ -25,13 +28,20 @@ def registerPage(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            form.save()
-            user = form.cleaned_data.get('username')
-            messages.success(request, 'Account was created for ' + user)
+            user = form.save()
+            email = form.cleaned_data.get('email')  # Get the email from the form
+            send_mail(
+                'Account Created',
+                'Your account has been created successfully!',
+                None,  # Uses DEFAULT_FROM_EMAIL from settings.py
+                [email],
+                fail_silently=False,
+            )
+            username = form.cleaned_data.get('username')
+            messages.success(request, 'Account was created for ' + username)
             return redirect('login')
         
-    return render(request, 'azure_content/register.html',{'form':form})
-
+    return render(request, 'azure_content/register.html', {'form': form})
 def loginPage(request):
     form = AuthenticationForm(request, data=request.POST or None)  
 
@@ -106,6 +116,7 @@ def receive_data(request):
             if temperature is not None and humidity is not None and luminosity is not None:
                 SensorData.objects.create(temperature=temperature, humidity=humidity, luminosity=luminosity, pH=pH,  timestamp=now())
                 print("Data saved successfully!")  # Debugging line
+                check_humidity_and_alert(humidity)
                 return JsonResponse({"message": "Data received successfully"}, status=201)
             else:
                 print("Invalid data format:", data)  # Debugging line
@@ -133,6 +144,61 @@ def get_sensor_data(request):
     
     return JsonResponse(data_list, safe=False)
 
+def clean_humidity_value(humidity_value):
+    if humidity_value is None:
+        return None  # or raise an error if needed
+    
+    # Convert to string in case it's not (e.g., if it's a number)
+    humidity_str = str(humidity_value)
+    
+    # Remove all non-digit and non-decimal characters
+    cleaned_value = ''.join(c for c in humidity_str if c.isdigit() or c == '.')
+    
+    # Handle cases where the string is empty after cleaning
+    if not cleaned_value:
+        return None
+    
+    # Convert to float (handle possible errors)
+    try:
+        return float(cleaned_value)
+    except ValueError:
+        return None
+
+def check_humidity_and_alert(humidity_value):
+    print("\n=== Starting humidity check ===")
+    threshold = 40
+    cleaned_value = clean_humidity_value(humidity_value)
+    print(f"Cleaned humidity value: {cleaned_value}")
+
+    if cleaned_value is None:
+        print("!! Invalid humidity value")
+        return
+
+    active_users = User.objects.filter(is_active=True)
+    print(f"Active users found: {active_users.count()}")
+
+    if cleaned_value < threshold:
+        print(f"!! Alert condition: {cleaned_value} < {threshold}")
+        latest_data = SensorData.objects.last()
+        print(f"Latest sensor data: {latest_data}")
+
+        for user in active_users:
+            if user.email:
+                print(f"\nPreparing email for: {user.email}")
+                try:
+                    send_mail(
+                        f'⚠️ Humidity Alert: {cleaned_value}%',
+                        f'Humidity is below threshold! Current: {cleaned_value}%',
+                        None,
+                        [user.email],
+                        fail_silently=False
+                    )
+                    print(f"Successfully sent to {user.email}")
+                except Exception as e:
+                    print(f"!! Failed to send to {user.email}: {str(e)}")
+    else:
+        print(f"No alert needed: {cleaned_value} >= {threshold}")
+
 def download_excel(request):
     wb = openpyxl.Workbook()
     ws = wb.active
@@ -157,3 +223,12 @@ def download_excel(request):
     response["Content-Disposition"] = 'attachment; filename="sensor_data.xlsx"'
     wb.save(response)
     return response
+
+from django.core.mail import send_mail
+send_mail(
+    'Test Subject',
+    'Test message body',
+    None,  # Uses DEFAULT_FROM_EMAIL
+    ['stefbraescu353@gmail.com'],  # Your actual email
+    fail_silently=False
+)
